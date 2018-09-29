@@ -1,0 +1,18 @@
+version: '3'
+# read here:
+#  - https://docs.docker.com/samples/library/haproxy/
+
+services:
+  primes-server:
+    image: demo/primes-server:latest
+    deploy:
+      replicas: 3
+
+  proxy:
+    image: dockercloud/haproxy
+    ports:
+      - 80:80
+    links:
+      - primes-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

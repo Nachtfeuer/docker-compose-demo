@@ -1,0 +1,16 @@
+FROM centos:7
+
+LABEL description="primes server"
+LABEL maintainer="Thomas Lehmann"
+
+RUN yum -y install python-setuptools
+RUN easy_install pip
+RUN pip install flask
+
+RUN mkdir -p /application
+ADD src/primes_server.py /application
+
+EXPOSE 5000/tcp
+ENV FLASK_APP=/application/primes_server.py
+
+ENTRYPOINT [ "flask", "run", "--host=0.0.0.0" ]
