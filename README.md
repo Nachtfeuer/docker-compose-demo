@@ -1,5 +1,21 @@
 # Welcome to the docker-compose primer
 
+**Table Of Contents**
+
+ - [Thoughts](#thoughts)
+ - [Building the image for the primes server](#building-the-image-for-the-primes-server)
+ - [Running the primes server directly](#running-the-primes-server-directly)
+ - [Using docker-compose for starting the primes server](#using-dockercompose-for-starting-the-primes-server)
+ - [Running multiple prime servers with a loadbalancer](#running-multiple-prime-servers-with-a-loadbalancer)
+
+## Thoughts
+
+ - The images can be built locally but the docker-compose also would work if the images are already uploaded
+   to a Docker registry; this idea is essential if you want to run such an environment either in Jenkins or
+   Travis CI like system as part of a CI/CD (coded pipeline) or via Kubernetes.
+ - The good thing is: if it works for those systems it also works locally which is usually not the case
+   if you start to use such tools like Docker and docker-compose relying on a concrete setup on your machine.
+ - The setup and teardown should always be very easy and fast.
 
 ## Building the image for the primes server
 
@@ -12,9 +28,9 @@ docker build -t demo/primes-server:latest . -f images/Dockerfile.primes_server
 ```bash
 $ docker run --rm --name=primes-server -p 5000:5000 -d demo/primes-server:latest
 $ curl http://localhost:5000/primes/check/3
-{"isPrime": true, "number": 3}
+{"isPrime": true, "hostname": "09d6af743a3f", "number": 3}
 $ curl http://localhost:5000/primes/check/4
-{"isPrime": false, "number": 4}
+{"isPrime": false, "hostname": "09d6af743a3f", "number": 4}
 ```
 
 ## Using docker-compose for starting the primes server
@@ -25,9 +41,9 @@ $ docker ps
 CONTAINER ID        IMAGE                       COMMAND                  CREATED              STATUS              PORTS                    NAMES
 29177c0471cf        demo/primes-server:latest   "flask run --host=0.…"   About a minute ago   Up About a minute   0.0.0.0:5000->5000/tcp   docker-compose-demo_primes-server_1
 $ curl http://localhost:5000/primes/check/3
-{"isPrime": true, "number": 3}
+{"isPrime": true, "hostname": "09d6af743a3f", "number": 3}
 $ curl http://localhost:5000/primes/check/4
-{"isPrime": false, "number": 4}
+{"isPrime": false, "hostname": "09d6af743a3f", "number": 4}
 ```
 
 The `-d` is that docker compose starts the process into background.
@@ -35,7 +51,7 @@ Avoiding that more services are started the service **prime-service** is specifi
 You can shutdown with `docker-compose -f compose/docker-compose-server.yml down`.
 
 
-## Running multipe prime servers with haproxy
+## Running multiple prime servers with a loadbalancer
 
 ```bash
 $ docker-compose --compatibility -f compose/docker-compose-loadbalancer.yml up -d
