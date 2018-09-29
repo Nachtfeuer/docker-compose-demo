@@ -3,8 +3,10 @@
 **Table Of Contents**
 
  - [Thoughts](#thoughts)
+ - [Requirements](#requirements)
+ - [Starting the primes server directly](#starting-the-primes-server-directly)
  - [Building the image for the primes server](#building-the-image-for-the-primes-server)
- - [Running the primes server directly](#running-the-primes-server-directly)
+ - [Running the primes server as Docker container](#running-the-primes-server-as-docker-container)
  - [Using docker-compose for starting the primes server](#using-dockercompose-for-starting-the-primes-server)
  - [Running multiple prime servers with a loadbalancer](#running-multiple-prime-servers-with-a-loadbalancer)
 
@@ -14,16 +16,48 @@
    to a Docker registry; this idea is essential if you want to run such an environment either in Jenkins or
    Travis CI like system as part of a CI/CD (coded pipeline) or via Kubernetes.
  - The good thing is: if it works for those systems it also works locally which is usually not the case
-   if you start to use such tools like Docker and docker-compose relying on a concrete setup on your machine.
- - The setup and teardown should always be very easy and fast.
+   if you use such tools (Docker and docker-compose) relying on a concrete setup on your machine.
+ - The setup and teardown should **always** be **easy** and **fast**.
+ - The example server (written in Python) is very short (below 50 lines of code)
+
+## Requirements
+
+ - Please ensure you have at least **Docker 18.06**.
+ - You should have at least **docker-compose 1.22.0**.
+ - You always should be in the root path of this repository when you execute shown commands.
+
+## Starting the primes server directly
+
+```bash
+$ HOSTNAME=demo FLASK_APP=src/primes_server.py flask run
+ * Serving Flask app "src/primes_server.py"
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
+
+Open another terminal and then:
+
+```bash
+$ curl http://127.0.0.1:5000/primes/check/3
+{"isPrime": true, "hostname": "demo", "number": 3}
+$ curl http://127.0.0.1:5000/primes/check/4
+{"isPrime": false, "hostname": "demo", "number": 4}
+```
 
 ## Building the image for the primes server
+
+It's basically about installing the required Python module **Flask**, adding the python
+server to the image and defining the command on how to run the server when the Docker container
+for this image is started.
 
 ```bash
 docker build -t demo/primes-server:latest . -f images/Dockerfile.primes_server
 ```
 
-## Running the primes server directly
+## Running the primes server as Docker container
 
 ```bash
 $ docker run --rm --name=primes-server -p 5000:5000 -d demo/primes-server:latest
@@ -32,6 +66,9 @@ $ curl http://localhost:5000/primes/check/3
 $ curl http://localhost:5000/primes/check/4
 {"isPrime": false, "hostname": "09d6af743a3f", "number": 4}
 ```
+
+When stopping the server (`docker stop primes-server`) the container automatically
+goes away because of the `--rm` option.
 
 ## Using docker-compose for starting the primes server
 
