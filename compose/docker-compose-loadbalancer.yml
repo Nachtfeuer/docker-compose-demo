@@ -1,6 +1,4 @@
 version: '3'
-# read here:
-#  - https://docs.docker.com/samples/library/haproxy/
 
 services:
   primes-server:

@@ -1,4 +1,4 @@
-# Welcome to the docker-compose primer
+# Welcome to the docker-compose demo
 
 **Table Of Contents**
 
@@ -9,6 +9,7 @@
  - [Running the primes server as Docker container](#running-the-primes-server-as-docker-container)
  - [Using docker-compose for starting the primes server](#using-dockercompose-for-starting-the-primes-server)
  - [Running multiple prime servers with a loadbalancer](#running-multiple-prime-servers-with-a-loadbalancer)
+ - [Scaling the primes server](#scaling-the-primes-server)
 
 ## Thoughts
 
@@ -121,3 +122,20 @@ $ for n in $(seq 1 12); do echo "$(curl -s http://localhost/primes/check/$n)"; d
   depending on current scale. There are other solution with Docker compose
   but I have not yet investigated.
 - You shutdown with `docker-compose --compatibility -f compose/docker-compose-loadbalancer.yml down`.
+
+## Scaling the primes server
+
+```bash
+docker-compose --compatibility -f compose/docker-compose-loadbalancer.yml up -d --scale=primes-server=10
+Starting compose_primes-server_1 ... done
+Starting compose_primes-server_2 ... done
+Starting compose_primes-server_3 ... done
+Creating compose_primes-server_4  ... done
+Creating compose_primes-server_5  ... done
+Creating compose_primes-server_6  ... done
+Creating compose_primes-server_7  ... done
+Creating compose_primes-server_8  ... done
+Creating compose_primes-server_9  ... done
+Creating compose_primes-server_10 ... done
+compose_proxy_1 is up-to-date
+```
