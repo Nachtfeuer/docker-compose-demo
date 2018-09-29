@@ -10,6 +10,7 @@
  - [Using docker-compose for starting the primes server](#using-dockercompose-for-starting-the-primes-server)
  - [Running multiple prime servers with a loadbalancer](#running-multiple-prime-servers-with-a-loadbalancer)
  - [Scaling the primes server](#scaling-the-primes-server)
+ - [Links](#links)
 
 ## Thoughts
 
@@ -139,3 +140,9 @@ Creating compose_primes-server_9  ... done
 Creating compose_primes-server_10 ... done
 compose_proxy_1 is up-to-date
 ```
+
+## Links
+
+ - <https://docs.docker.com/compose/install/>
+ - <https://docs.docker.com/compose/compose-file/>
+ - <https://docs.docker.com/compose/startup-order/>
