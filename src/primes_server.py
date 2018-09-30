@@ -17,6 +17,13 @@ def is_prime(n):
     return True
 
 
+@app.route("/status")
+def handle_status():
+    return Response(json.dumps({
+        'hostname': os.environ['HOSTNAME']
+    }), mimetype='application/json')
+
+
 @app.route("/primes/check/<number>")
 def handle_is_prime(number):
     return Response(json.dumps({

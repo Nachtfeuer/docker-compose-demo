@@ -10,6 +10,7 @@
  - [Using docker-compose for starting the primes server](#using-dockercompose-for-starting-the-primes-server)
  - [Running multiple prime servers with a loadbalancer](#running-multiple-prime-servers-with-a-loadbalancer)
  - [Scaling the primes server](#scaling-the-primes-server)
+ - [Heealth check](#health-check)
  - [Links](#links)
 
 ## Thoughts
@@ -139,6 +140,29 @@ Creating compose_primes-server_8  ... done
 Creating compose_primes-server_9  ... done
 Creating compose_primes-server_10 ... done
 compose_proxy_1 is up-to-date
+```
+
+## Health check
+
+The health check can be implemented as REST call of the server.
+The server has to tell whether all is fine.
+
+```bash
+$ docker ps --format="{{.Names}} {{.Status}}"
+compose_proxy_1 Up 43 seconds
+compose_primes-server_3 Up 45 seconds (healthy)
+compose_primes-server_2 Up 45 seconds (healthy)
+compose_primes-server_1 Up 46 seconds (healthy)
+```
+
+In the logs of each container you see a record each
+10 seconds:
+
+```
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:5000/status"]
+  interval: 10s
+  timeout: 2s
 ```
 
 ## Links
