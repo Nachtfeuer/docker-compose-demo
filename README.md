@@ -10,7 +10,7 @@
  - [Using docker-compose for starting the primes server](#using-dockercompose-for-starting-the-primes-server)
  - [Running multiple prime servers with a loadbalancer](#running-multiple-prime-servers-with-a-loadbalancer)
  - [Scaling the primes server](#scaling-the-primes-server)
- - [Heealth check](#health-check)
+ - [Health check](#health-check)
  - [Links](#links)
 
 ## Thoughts
