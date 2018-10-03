@@ -11,6 +11,7 @@
  - [Running multiple prime servers with a loadbalancer](#running-multiple-prime-servers-with-a-loadbalancer)
  - [Scaling the primes server](#scaling-the-primes-server)
  - [Health check](#health-check)
+ - [Using Mongo database](#using-mongo-database)
  - [Links](#links)
 
 ## Thoughts
@@ -163,6 +164,55 @@ healthcheck:
   test: ["CMD", "curl", "-f", "http://localhost:5000/status"]
   interval: 10s
   timeout: 2s
+```
+
+## Using Mongo database
+
+Starting a Mongo database via Docker:
+
+```bash
+$ docker run --rm --name=mongo -p 27017:27017 -d mongo:latest
+```
+
+Using the previously started Docker container:
+
+```bash
+$ MONGODB_HOST=localhost HOSTNAME=demo FLASK_APP=src/primes_server_mongo.py flask run
+```
+
+This prime server stores each calculated primes for a given maximum number into
+Mongo DB and next time when same list is requested the list is queried in the database
+and returnd instead of the calculation.
+
+The docker image can be built with
+
+```bash
+$ docker build -t demo/primes-server-mongo:latest . -f images/Dockerfile.primes_server_mongo
+```
+
+With this you can also run an environment with Mongo DB, three primes server and
+a loadbalance in front of this:
+
+```bash
+$ docker-compose --compatibility -f compose/docker-compose-mongo.yml up -d
+```
+
+Using **curl** then only difference now is that (currently) the port is 80 (loadbalancer).
+
+```bash
+$ curl http://127.0.0.1:80/primes/list/100
+{"max_n": 100, "primes": [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], "hostname": "383ac2648957"}
+```
+
+You also can verify it changing into the Mongo DB Docker container:
+
+```bash
+$ docker exec -it compose_mongodb_1 bash
+$ mongo
+$ use primes
+switched to db primes
+$ db.Primes.find({max_n: 100})
+{ "_id" : ObjectId("5bb4aa1a667cd800012a95d0"), "max_n" : 100, "values" : [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67,71, 73, 79, 83, 89, 97 ] }
 ```
 
 ## Links
